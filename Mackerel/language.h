@@ -3,7 +3,7 @@
 
 // NOTE: IF YOU CHANGE THIS FILE / MERGE THIS FILE WITH CHANGES
 //
-//   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRALCD" / "SDSUPPORT" #define IN "Configuration.h" 
+//   ==> ALWAYS TRY TO COMPILE MARLIN WITH/WITHOUT "ULTIPANEL" / "ULTRALCD" / "SDSUPPORT" #define IN "Configuration.h"
 //   ==> ALSO TRY ALL AVAILABLE "LANGUAGE_CHOICE" OPTIONS
 
 // Languages
@@ -59,11 +59,11 @@
 /* nothing here as of yet */
 
 // Common serial messages
-#define MSG_MARLIN "Mackerel"
+#define MSG_MARLIN "FylaExtruder"
 
-#define SPLASH1 "    Lyman/Mulier"
-#define SPLASH2 " Filament Extruder"
-#define SPLASH3 "        V5.0"
+#define SPLASH1 "Orohack"
+#define SPLASH2 "Filament Extruder"
+#define SPLASH3 "V0.1"
 
 
 #if LANGUAGE_CHOICE == 1
@@ -208,8 +208,8 @@
 	#define MSG_BROWNOUT_RESET " Brown out Reset"
 	#define MSG_WATCHDOG_RESET " Watchdog Reset"
 	#define MSG_SOFTWARE_RESET " Software Reset"
-	#define MSG_AUTHOR " | Author: "
-	#define MSG_CONFIGURATION_VER " Last Updated: "
+	#define MSG_AUTHOR " | Author: Orohack "
+	#define MSG_CONFIGURATION_VER " Last Updated: 16/03/2017 "
 	#define MSG_FREE_MEMORY " Free Memory: "
 	#define MSG_PLANNER_BUFFER_BYTES "  PlannerBufferBytes: "
 	#define MSG_OK "ok"
@@ -230,7 +230,7 @@
 	#define MSG_M109_INVALID_EXTRUDER "M109 Invalid extruder "
 	#define MSG_HEATING "Heating..."
 	#define MSG_HEATING_COMPLETE "Heating done.       "
-    #define MSG_EXTRUDE_COMPLETE "Extrude Run Complete"
+  #define MSG_EXTRUDE_COMPLETE "Extrude Run Complete"
 	#define MSG_BED_HEATING "Bed Heating."
 	#define MSG_BED_DONE "Bed done."
 	#define MSG_M115_REPORT "FIRMWARE_NAME:Mackerel V1; Marlin mashup for Filament Extruders FIRMWARE_URL:" FIRMWARE_URL " PROTOCOL_VERSION:" PROTOCOL_VERSION " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS) " UUID:" MACHINE_UUID "\n"
@@ -2274,4 +2274,3 @@
 #endif
 
 #endif // ifndef LANGUAGE_H
-

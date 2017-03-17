@@ -24,12 +24,12 @@
  and depends on a prototype filament width sensor. It replaces much of the control electronics in
  the current design with one controller. It can control the extruder motor, puller motor, Extruder
  heater (PID) with thermistor, winder motor, filament cooling fan and has input for a filament width
- sensor. The processes and menus have been adapted to control a filament extruder. 
- 
+ sensor. The processes and menus have been adapted to control a filament extruder.
+
  This firmware is based on Marlin 3D Printer Firmware but also has many original parts.
   (https://github.com/ErikZalm/Marlin)
- 
- Marlins eat Mackerels, 3D printers eat filament. 
+
+ Marlins eat Mackerels, 3D printers eat filament.
 
  */
 
@@ -170,7 +170,7 @@
 // M665 - set delta configurations
 // M666 - set delta endstop adjustment
 // M605 - Set dual x-carriage movement mode: S<mode> [ X<duplication x-offset> R<duplication temp offset> ]
-// M700 - Extruder data dump 
+// M700 - Extruder data dump
 // M907 - Set digital trimpot motor current using axis codes.
 // M908 - Control digital trimpot directly.
 // M350 - Set microstepping mode.
@@ -208,8 +208,8 @@ float puller_feedrate_last = DEFAULT_PULLER_FEEDRATE;
 float sum_measured_filament_width=0;  //numerator in average
 float n_measured_filament_width=0;  //denominator in average
 float avg_measured_filament_width=0; //average
-float max_measured_filament_width=0; // max measured filament width 
-float min_measured_filament_width=0; // min measured filament width 
+float max_measured_filament_width=0; // max measured filament width
+float min_measured_filament_width=0; // min measured filament width
 float extrude_length=0; //length extruded
 float fil_length_cutoff= DEFAULT_LENGTH_CUTOFF; //length of filament at which extruder shuts down
 int default_winder_speed = DEFAULT_WINDER_SPEED;
@@ -227,7 +227,7 @@ float model_param; //Smith Predictor low pass param
 float smith_filter_out;
 float smith_filter_param;
 
-int model_delay[100]; //Smith predictor delay line 
+int model_delay[100]; //Smith predictor delay line
 float last_p_position=0.0;  //keeps track of last position updated in the delay line
 
 float filament_control=0.0;
@@ -308,15 +308,15 @@ int EtoPPressure=0;
   // these are the default values, can be overriden with M665
   float delta_radius= DELTA_RADIUS;
   float delta_tower1_x= -SIN_60*delta_radius; // front left tower
-  float delta_tower1_y= -COS_60*delta_radius;	   
+  float delta_tower1_y= -COS_60*delta_radius;
   float delta_tower2_x=  SIN_60*delta_radius; // front right tower
-  float delta_tower2_y= -COS_60*delta_radius;	   
+  float delta_tower2_y= -COS_60*delta_radius;
   float delta_tower3_x= 0.0;                  // back middle tower
   float delta_tower3_y= delta_radius;
   float delta_diagonal_rod= DELTA_DIAGONAL_ROD;
   float delta_diagonal_rod_2= sq(delta_diagonal_rod);
   float delta_segments_per_second= DELTA_SEGMENTS_PER_SECOND;
-#endif					
+#endif
 
 //===========================================================================
 //=============================Private Variables=============================
@@ -584,7 +584,7 @@ void setup()
   servo_init();
   setup_extruder_on_off_pin(); //FMM initialize pin to shut down/start up extruder motor.
   lcd_init();
-  _delay_ms(1000);	// wait 1sec to display the splash screen
+  _delay_ms(5000);	// mostramos el mensaje de inicio durante 5 segundos
 
   #if defined(CONTROLLERFAN_PIN) && CONTROLLERFAN_PIN > -1
     SET_OUTPUT(CONTROLLERFAN_PIN); //Set pin used for driver cooling fan
@@ -593,7 +593,7 @@ void setup()
   #ifdef DIGIPOT_I2C
     digipot_i2c_init();
   #endif
-    
+
   #if BEEPER > 0
     SET_OUTPUT(BEEPER);
   #endif
@@ -645,24 +645,24 @@ void loop()
   manage_inactivity();
   checkHitEndstops();
   lcd_update();
-  
+
   //FMM calculate max, min, and average filament width
 
   timebuff=millis();
   deltatime = timebuff-lasttime;  //calculate delta times
   lasttime = timebuff;  //keep track of last sample time
-  
+
 
   if(extrude_length < fil_length_cutoff)
 	  winderSpeed = default_winder_speed*255/winder_rpm_factor;  //keep winder on all the time unless at end of spool
-  
 
-  
-  
-  
+
+
+
+
   if((extrude_status & (ES_STATS_SET))  == (ES_STATS_SET) ) //check whether we should collect stats on filament width
 	  {
-	  
+
 	  sum_measured_filament_width = sum_measured_filament_width+current_filwidth;
 	  n_measured_filament_width = n_measured_filament_width + 1.0;
 	  avg_measured_filament_width=sum_measured_filament_width/n_measured_filament_width;
@@ -671,8 +671,8 @@ void loop()
 		min_measured_filament_width=current_filwidth;
 	  min_measured_filament_width=min(min_measured_filament_width,current_filwidth);
 	  extrude_length=extrude_length+puller_increment;
-	  
-	  
+
+
 	  if(extrude_length >= fil_length_cutoff){  //check whether we extruded enough filament
 		  setTargetHotend0(0);
 		  winderSpeed = 0;
@@ -682,23 +682,23 @@ void loop()
 		  timeremaining=0;
 		  LCD_MESSAGEPGM(MSG_EXTRUDE_COMPLETE);
 	  } else {
-		  
+
 		  if(puller_feedrate>0)
 		  timeremaining = (fil_length_cutoff-extrude_length)/puller_feedrate*1000;
-		  
+
 	  }
-		  
+
 	  }
-	  
-  
-  
+
+
+
   //FMM generate extruder motion based on LCD inputs
-  
+
   if (READ(EXTRUDER_MOTOR_ON_OFF_PIN))  //check if pin is high (=off)
 	  extrude_status=extrude_status & ES_SWITCH_CLEAR;
   else
 	  extrude_status= extrude_status | ES_SWITCH_SET;
-  
+
   if(degHotend(active_extruder)>EXTRUDE_MINTEMP)  //check if extruder at min heated temp
 	  extrude_status=extrude_status | ES_HOT_SET;
   else
@@ -706,47 +706,47 @@ void loop()
 	  extrude_status=extrude_status & ES_HOT_CLEAR;
 	  extrude_status=extrude_status & ES_TEMP_CLEAR;
 	  }
- 
-  
-  
-		  
+
+
+
+
   if(((degHotend(active_extruder) >= (degTargetHotend(active_extruder)-TEMP_WINDOW)) && (degHotend(active_extruder) <= (degTargetHotend(active_extruder)+TEMP_WINDOW)))  && ((extrude_status & ES_TEMP_SET)==0))  //check if extruder at or near setpoint
   	  {
 	  extrude_status=extrude_status | ES_TEMP_SET;
 	  WRITE(BEEPER,HIGH);
 	  LCD_MESSAGEPGM(MSG_HEATING_COMPLETE);
   	  }
-  	
-  
-  
+
+
+
   if((extrude_status & ES_ENABLE_SET) >0){
-	  
-	  
-	  
-	  
-	  
-	 //old 
+
+
+
+
+
+	 //old
 	 // feedrate=20*60;
 	 // extruder_increment=feedmultiply/100.0;
 	 // puller_increment=extruder_increment*pullermultiply/1000.0;
-	  
+
 	  //extruder_feedrate=feedrate*extruder_increment/60.0;
 	  //puller_feedrate=extruder_feedrate*pullermultiply/1000.0;
-	  
+
 	 //new
 	  extruder_increment=extruder_rpm_set/EXTRUDER_RPM_MAX*8;  //make extruder increment 1 unit for max RPM and scale down as RPM input decreases *8 for more duration (removes pulsing)
 	  extruder_feedrate=extruder_rpm_set/0.6;
 	  puller_increment=puller_feedrate*0.6/EXTRUDER_RPM_MAX*8;  //make puller increment vary to control it *8 for more duration (removes pulsing)
-	  
-	  
-	  
-	  
-	  
+
+
+
+
+
 	  //calculate move  - always scale step size to feedmultiply (was previously fix step side of 0.1)
 	  destination[P_AXIS] = puller_increment + current_position[P_AXIS]; //puller
-	  
 
-	  	  
+
+
 	  if((extrude_status & ES_HOT_SET) && (extrude_status & ES_SWITCH_SET))  //check that extruder is at temp and switch in on
 		  {//calculate move  - always scale step size to feedmultiply (was previously fix step side of 0.1)
 		  destination[E_AXIS] = extruder_increment + current_position[E_AXIS];  //extruder
@@ -760,24 +760,24 @@ void loop()
 		  extruder_rpm=0.0;
 		  feedrate=puller_feedrate;
 		  }
-	  
-	  
-	  
+
+
+
 	  //calculate PID - delta is spatial, not time
 	  if((extrude_status & (ES_AUTO_SET | ES_HOT_SET | ES_SWITCH_SET)) == (ES_AUTO_SET | ES_HOT_SET | ES_SWITCH_SET) ){  ///check for normal extrusion
 	  		//  Extruder in Automatic control
-	  		
-		  
+
+
 		  //add smith predictor here to handle dead time in filament transit
 		  /*
 		  //calculate model of diameter (low pass filtered version of gain* extruder_RPM/filament control)
 		  model_out=(1.0-model_param)*model_out+model_param*(model_gain*extruder_rpm/filament_control);
-		  
-		  
+
+
 		  //update delay based on spatial delay
-		  
+
 		  while(current_position[P_AXIS]- last_p_position > 1.0){  //check if over 1 mm passed
-			  
+
 		  // shift the delay by one
 		     	for (idelay=99; idelay>0 ; idelay--)
 		     		{
@@ -785,75 +785,75 @@ void loop()
 		     		}
 		     	// add the new model output to the delay
 		     	model_delay[0]=(int)(model_out*1000);  //convert the model out of 0-3.0 mm to an int in range 0-3000.
-		     	
+
 		     	last_p_position=last_p_position+1.0;
 		  }
-		  
-		  //calculate difference between measured width and delayed model and filter   	
+
+		  //calculate difference between measured width and delayed model and filter
 		  smith_filter_out=(1.0-smith_filter_param)*smith_filter_out+smith_filter_param*(current_filwidth-model_delay[99]/1000.0);
-		     	
+
 		  //update the error term to include the model
-		  
-		  
+
+
 		  pid_input= model_out+smith_filter_out;
-		 */ 
+		 */
 		 pid_input = current_filwidth;
-		
-			
+
+
 				  pid_error_fwidth = filament_width_desired - pid_input;
 				  pTerm_fwidth = puller_feedrate_last - fwidthKp * pid_error_fwidth;
-				  
+
 				  /*
 				  if(pTerm_fwidth>PULLER_PID_MAX_LIMIT){
 					  filament_control=PULLER_PID_MAX_LIMIT;
-					  pid_reset_fwidth = true;  
+					  pid_reset_fwidth = true;
 				  } else if(pTerm_fwidth<PULLER_PID_MIN_LIMIT){
 					  filament_control=PULLER_PID_MIN_LIMIT;
 					  pid_reset_fwidth = true;
 				  }else{
-				  
+
 					  if(pid_reset_fwidth== true){
 						  dia_iState_fwidth=0.0;
 						  pid_reset_fwidth = false;
 					  }
-				  
+
 				  */
-				  
+
 				  if((filament_control<PULLER_PID_MAX_LIMIT && pid_error_fwidth<0) || (filament_control>PULLER_PID_MIN_LIMIT && pid_error_fwidth>0))
 					  {
 					  dia_iState_fwidth += pid_error_fwidth* puller_increment; //use spatial dT=puller_increment
 					  dia_iState_fwidth = constrain(dia_iState_fwidth, -PULLER_PID_INTEGRATOR_WIND_LIMIT, PULLER_PID_INTEGRATOR_WIND_LIMIT);
 					  }
-				  iTerm_fwidth = fwidthKi * dia_iState_fwidth;  
-		
+				  iTerm_fwidth = fwidthKi * dia_iState_fwidth;
+
 				  //K1 defined in Configuration.h in the PID settings
 				  #define K2 (1.0-K1)
 				  dTerm_fwidth= (fwidthKd/puller_increment * (pid_input - dia_dState_fwidth))*K2 + (K1 * dTerm_fwidth);  //use spatial dT=puller_increment
-				  
-		
+
+
 				  filament_control = constrain(pTerm_fwidth - iTerm_fwidth + dTerm_fwidth, PULLER_PID_MIN_LIMIT, PULLER_PID_MAX_LIMIT);
-				  
+
 				  dia_dState_fwidth = pid_input;
-				  
-		  
-		  
-		  
-		  
-				  
+
+
+
+
+
+
 	  		  puller_feedrate=filament_control;
-	  		  
-	  		  
-	  		  
+
+
+
 	  	  } else {
 	  		  puller_feedrate_last=puller_feedrate;  //keep track of last puller_feedrate when running manual control
 	  		  dia_iState_fwidth=0;  //reset the integral
 	  	  }
-	  		  
-	  
-	  
-	  
-	  
-	  
+
+
+
+
+
+
 	  //send move
 	  previous_millis_cmd = millis();  //refresh the kill watchdog timer
 	  plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], destination[P_AXIS], feedrate, active_extruder);  //FMM added P_AXIS
@@ -867,13 +867,13 @@ void loop()
 	  puller_feedrate=0;
 	  extruder_rpm=0;
   }
- 
-  
-  
-	
-  
-  
-  
+
+
+
+
+
+
+
 }
 
 void get_command()
@@ -1434,7 +1434,7 @@ void refresh_cmd_timeout(void)
       current_position[Z_AXIS]+=retract_zlift;
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
       //prepare_move();
-      current_position[E_AXIS]-=(retract_length+retract_recover_length)/volumetric_multiplier[active_extruder]; 
+      current_position[E_AXIS]-=(retract_length+retract_recover_length)/volumetric_multiplier[active_extruder];
       plan_set_e_position(current_position[E_AXIS]);
       float oldFeedrate = feedrate;
       feedrate=retract_recover_feedrate;
@@ -2493,7 +2493,7 @@ void process_commands()
       SERIAL_PROTOCOL(current_position[E_AXIS]);
       SERIAL_PROTOCOLPGM(" P:");				//FMM added P_AXIS
       SERIAL_PROTOCOL(current_position[P_AXIS]);
-            
+
       SERIAL_PROTOCOLPGM(MSG_COUNT_X);
       SERIAL_PROTOCOL(float(st_get_position(X_AXIS))/axis_steps_per_unit[X_AXIS]);
       SERIAL_PROTOCOLPGM(" Y:");
@@ -2636,7 +2636,7 @@ void process_commands()
 		if(code_seen('S')) {
 			delta_segments_per_second= code_value();
 		}
-		
+
 		recalc_delta_settings(delta_radius, delta_diagonal_rod);
 		break;
     case 666: // M666 set delta endstop adjustemnt
@@ -2920,14 +2920,14 @@ void process_commands()
     case 240: // M240  Triggers a camera by emulating a Canon RC-1 : http://www.doc-diy.net/photo/rc-1_hacked/
      {
      	#ifdef CHDK
-       
+
          SET_OUTPUT(CHDK);
          WRITE(CHDK, HIGH);
          chdkHigh = millis();
          chdkActive = true;
-       
+
        #else
-     	
+
       	#if defined(PHOTOGRAPH_PIN) && PHOTOGRAPH_PIN > -1
 	const uint8_t NUM_PULSES=16;
 	const float PULSE_LENGTH=0.01524;
@@ -3268,14 +3268,14 @@ void process_commands()
       #endif
     }
     break;
-	case 700: // M700 - Extruder data dump 
+	case 700: // M700 - Extruder data dump
 	{
 		// Duration and time remaining
 		SERIAL_PROTOCOLPGM("ok D:");
 		SERIAL_PROTOCOL(duration);
 		SERIAL_PROTOCOLPGM(" /");
 		SERIAL_PROTOCOL(timeremaining);
-		// lenght    
+		// lenght
 		SERIAL_PROTOCOLPGM(" L:");
 		SERIAL_PROTOCOL_F(extrude_length, 1);
 		// filament width
@@ -3517,9 +3517,9 @@ void clamp_to_software_endstops(float target[3])
 void recalc_delta_settings(float radius, float diagonal_rod)
 {
 	 delta_tower1_x= -SIN_60*radius; // front left tower
-	 delta_tower1_y= -COS_60*radius;	   
+	 delta_tower1_y= -COS_60*radius;
 	 delta_tower2_x=  SIN_60*radius; // front right tower
-	 delta_tower2_y= -COS_60*radius;	   
+	 delta_tower2_y= -COS_60*radius;
 	 delta_tower3_x= 0.0;                  // back middle tower
 	 delta_tower3_y= radius;
 	 delta_diagonal_rod_2= sq(diagonal_rod);
@@ -3750,7 +3750,7 @@ void manage_inactivity()
       }
     }
   }
-  
+
   #ifdef CHDK //Check if pin should be set to LOW after M240 set it to HIGH
     if (chdkActive)
     {
@@ -3759,7 +3759,7 @@ void manage_inactivity()
       WRITE(CHDK, LOW);
     }
   #endif
-  
+
   #if defined(KILL_PIN) && KILL_PIN > -1
     if( 0 == READ(KILL_PIN) )
       kill();
@@ -3826,8 +3826,8 @@ void kill()
 
 void Stop()
 {
-	
-	
+
+
 
   disable_heater();
   if(Stopped == false) {
@@ -3837,7 +3837,7 @@ void Stop()
     SERIAL_ERRORLNPGM(MSG_ERR_STOPPED);
     LCD_MESSAGEPGM(MSG_STOPPED);
   }
-  
+
 }
 
 bool IsStopped() { return Stopped; };
@@ -3941,5 +3941,3 @@ bool setTargetedHotend(int code){
   }
   return false;
 }
-
-
