@@ -1,6 +1,6 @@
 #include "Mackerel.h"
-#include "planner.h"
-#include "temperature.h"
+//#include "planner.h"
+//#include "temperature.h"
 #include "ultralcd.h"
 #include "ConfigurationStore.h"
 
